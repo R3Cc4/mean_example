@@ -1,17 +1,13 @@
+var mongoose = require('mongoose');
 var express = require('express');
 var router = express.Router();
-
-
-router.get('/', function (req, res, next) {
-    res.render('index', {
-        title: 'Express'
-    });
-});
-
-
-var mongoose = require('mongoose');
 var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
+
+/* GET home page. */
+router.get('/', function (req, res) {
+    res.render('index');
+});
 
 router.get('/posts', function (req, res, next) {
     Post.find(function (err, posts) {
@@ -74,7 +70,7 @@ router.post('/posts/:post/comments', function (req, res, next) {
     comment.post = req.post;
     comment.save(function (err, comment) {
         if (err) {
-            next(err);
+            return next(err);
         }
         req.post.comments.push(comment);
         req.post.save(function (err, post) {
@@ -102,7 +98,7 @@ router.param('comment', function (req, res, next, id) {
     });
 });
 
-router.put('posts/:post/comments/:comment/upvote', function (req, res, next) {
+router.put('/posts/:post/comments/:comment/upvote', function (req, res, next) {
     req.comment.upvote(function (err, comment) {
         if (err) {
             return next(err);
